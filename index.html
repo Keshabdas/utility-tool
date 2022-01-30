@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/png" href="./images/EncDec.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption and Decryption Module for Wellness Portal</title>
+    <meta http-equiv="content-type" content="text/html" charset="windows-1252">
+    <script type="text/javascript" src="js/aes.js"></script>
+    <script src="js/jquery.slim.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/json-viewer.js"></script>
+
+    <!-- Script for creating new tab -->
+    <script src="js/new-tab.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JSON Viewer CSS -->
+    <link href="css/json-viewer.css" rel="stylesheet">
+
+    <!-- Custom Styling -->
+    <link href="css/custom-style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light text-center">
+        <div class="d-flex justify-content-between align-content-center w-100">
+            <span class="setting_icon" data-toggle="modal" data-target="#staticBackdrop">⚙</span>
+            <h5 class="w-100 mb-0">Encryption Decryption Utility For Wellness Portal</h5>
+            <div class="d-flex">
+                <label class="switch">
+                    <input id="mode_switch" type="checkbox" onchange="handleDarkMode()">
+                    <span class="slider round"></span>
+                    <span class="sun_img">🌞</span>
+                    <span class="moon_img">🌜</span>
+                </label>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid main_wrapper">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li id="item-1" class="nav-item" role="presentation">
+                        <a class="nav-link active" id="tab-no-1" data-toggle="tab" href="#tab-1" role="tab"
+                            aria-controls="tab-1" aria-selected="true">Tab 1</a>
+                    </li>
+                    <li id="add" class="nav-item" role="presentation">
+                        <span>&#x2b;</span>
+                    </li>
+                </ul>
+                <div class="tab-content shadow" id="Tab_Content">
+                    <div class="tab-pane fade active show" id="tab-1" role="tabpanel" aria-labelledby="tab-no-1">
+                        <div class="row p-2">
+                            <div class="col-sm-4">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group shadow-sm">
+                                            <textarea id="cipher_text_1" class="form-control decryption_box"
+                                                id="exampleFormControlTextarea1" placeholder="Decryption"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-sm btn-info shadow-sm"
+                                            onclick="AesDecrypt(1)">Decrypt</button>
+                                        <!-- <button class="btn btn-info shadow-sm" onclick="copyToClipBoardFunction('decrypt',1)">Copy to Clipboard</button> -->
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group shadow-sm">
+                                            <textarea id="plain_text_1" class="form-control encryption_box"
+                                                id="exampleFormControlTextarea2" placeholder="Encryption"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-sm btn-info shadow-sm"
+                                            onclick="AesEncrypt(1)">Encrypt</button>
+                                        <!-- <button class="btn btn-info shadow-sm" onclick="copyToClipBoardFunction('encrypt',1)">Copy to Clipboard</button> -->
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row">
+                                    <div class="col-sm-12 d-flex justify-content-end">
+                                        <button class="btn btn-sm btn-info shadow-sm" onclick="clearAll(1)">Clear
+                                            All</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 right-side">
+                                <div class="tab">
+                                    <button class="tablinks active" id="text_view_button_1"
+                                        onclick="textView_tab_onClick(1)">Text View</button>
+                                    <button class="tablinks" id="json_view_button_1"
+                                        onclick="jsonView_tab_onClick(1)">JSON View</button>
+                                </div>
+
+                                <div id="text_view_content_1" class="tabcontent text_view show shadow-sm">
+                                    <div class="form-group">
+                                        <textarea id="json_Result_1" class="form-control result_box"
+                                            id="exampleFormControlTextarea3" placeholder="Result" readonly></textarea>
+                                    </div>
+                                    <span class="copy_btn" data-title="Copy to Clipboard"
+                                        onclick="copyToClipBoardFunction('text_view',1)">
+                                        <img src="./images/copy-to-clipboard.png" height="24" width="24" />
+                                    </span>
+                                    <!-- <button class="btn btn-info btn-sm copy_btn shadow-sm" onclick="copyToClipBoardFunction('text_view',1)">Copy to Clipboard</button> -->
+                                </div>
+                                <div id="json_view_content_1" class="tabcontent hide shadow-sm">
+                                    <div class="form-group">
+                                        <button id="collapse_all_1"
+                                            class="json_view_btn btn btn-sm btn-outline-info hide"
+                                            onclick="collapseAllOnClick(1)">Collapse All</button>
+                                        <button id="expand_all_1" class="json_view_btn btn btn-sm btn-outline-info hide"
+                                            onclick="expandAllOnClick(1)">Expand All</button>
+                                    </div>
+                                    <div id="json_1" class="json-view light-theme">No Data</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Settings</h5>
+                    <button type="button" onclick="onModalClose()" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="settings">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-12">
+                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
+                                    aria-orientation="vertical">
+                                    <a class="nav-link active" id="encryption_key" data-toggle="pill"
+                                        href="#encryption_tab_content" role="tab" aria-controls="encryption_tab_content"
+                                        aria-selected="true">Encryption Keys</a>
+                                </div>
+                            </div>
+                            <div class="col-md-10 col-sm-12">
+                                <div class="tab-content" id="v-pills-tabContent">
+                                    <div class="tab-pane fade show active overflow-auto" id="encryption_tab_content"
+                                        role="tabpanel" aria-labelledby="encryption_key">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Selected</th>
+                                                    <th scope="col">Company Name</th>
+                                                    <th scope="col">AIH_ENI</th>
+                                                    <th scope="col">AIH_ENK</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="encryption_keys_wrapper"></tbody>
+                                        </table>
+                                        <button class="btn btn-sm btn-info float-right my-1"
+                                            onclick="addEditableRow()">Add new</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</body>
+<script defer src="js/main.js"></script>
+
+</html>

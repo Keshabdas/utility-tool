@@ -1,0 +1,283 @@
+* {
+    transition: background-color 0.6s ease;
+}
+:root {
+    --primary-color: #17a2b8;
+}
+hr {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.btn-sm {
+    font-size: 0.775rem;
+}
+.border-color-dark {
+    border-color: #dee2e6;
+}
+.main_wrapper {
+    max-width: 1600px;
+}
+.navbar {
+    margin-bottom: 5px;
+}
+.navbar.navbar-custom-dark {
+    background: #1b1b1b;
+}
+.form-group {
+    margin-bottom: .5rem
+}
+.encryption_box, 
+.decryption_box {
+    height: calc(50vh - 130px) !important;
+}
+.result_box {
+    height: calc(100vh - 185px) !important;
+}
+.close_icon {
+    visibility: hidden;
+    font-weight: bold;
+}
+.main_wrapper .nav-item .active > .close_icon{
+    visibility: visible;
+}
+.main_wrapper .nav-link {
+    color: black;
+    width: 110px;
+    text-align: center;
+}
+.main_wrapper .nav-link.active {
+    color: #17a2b8 !important;
+    font-weight: bold;
+}
+.main_wrapper .nav-link:hover {
+    color: #17a2b8 !important;
+}
+
+#add > span {
+    font-weight: bold;
+    font-size: 18px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    background-color: transparent;
+    border: 1px solid #dee2e6;
+    color: #666;
+    padding: 0rem .4rem;
+    margin: .375rem;
+    line-height: 1.5;
+    border-radius: .375rem;
+    cursor: pointer;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+}
+#add > span:hover {
+    color: #007bff;
+    border-color: #007bff;
+}
+.main_wrapper .tab-content {
+    border: 1px solid transparent;
+    border-color: #fff #dee2e6 #dee2e6 #dee2e6;
+    height: auto;
+}
+.disable {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+/* Style the tab */
+.right-side .tab {
+    overflow: hidden;
+}
+
+/* Style the buttons that are used to open the tab content */
+.right-side .tab button {
+    border: 1px solid #ccc;
+    border-top-left-radius: .375rem;
+    border-top-right-radius: .375rem;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: .3rem 1rem;
+    transition: 0.3s;
+    margin-right: 5px;
+}
+/* Change background color of buttons on hover */
+.right-side .tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.right-side .tab button.active {
+    background-color: #ccc;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+/* Style the tab content */
+.right-side .tabcontent {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top-right-radius: .375rem;
+    border-bottom-left-radius: .375rem;
+    border-bottom-right-radius: .375rem;
+    height: calc(100vh - 160px) !important;
+    overflow: auto;
+}
+.right-side .tabcontent.text_view {
+    position: relative;
+}
+.right-side .tabcontent #json {
+    height: 100%;
+    overflow: auto;
+}
+.right-side .show {
+   display: block;
+}
+.right-side .hide {
+   display: none;
+}
+
+.copy_btn {
+    padding: 12px 14px;
+    border: 1px solid lightgrey;
+    background-color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    /* top: 24px; */
+    bottom: 30px;
+    right: 35px;
+    transition: all 0.3s linear;
+}
+.copy_btn:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+#settings .nav-link {
+    border-radius: 0px;
+}
+#settings .nav-link.active {
+    background-color: #17a2b8 !important;
+    color: white;
+}
+#settings .nav-link:hover {
+    color: white;
+}
+
+
+
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 28px;
+    margin-bottom: 0px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    z-index: 10;
+}
+
+input:checked + .slider {
+    background-color: #4d4d4d;
+}
+  
+/* input:focus + .slider {
+    box-shadow: 0 0 1px #17a2b8;
+} */
+  
+input:checked + .slider:before {
+    -webkit-transform: translateX(25px);
+    -ms-transform: translateX(25px);
+    transform: translateX(25px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.sun_img {
+    position: absolute;
+    top: 1px;
+    right: 4px;
+}
+
+.moon_img {
+    position: absolute;
+    top: 1px;
+    left: 4px;
+}
+
+.setting_icon {
+    cursor: pointer;
+}
+
+/* css for tooltip on copy to clipboard */
+[data-title]:hover:after, [data-title]:hover:before {
+    opacity: 1;
+    transition: all 0.2s ease 0.3s;
+    visibility: visible;
+}
+
+[data-title]:after {
+    content: attr(data-title);
+    background-color: #17a2b8;    
+    color: #ffffff;
+    position: absolute;
+    top: 0.5rem;
+    left: -9.1rem;
+    padding: 4px 10px;
+    visibility: hidden;
+    width: auto;
+    border-radius: 5px;
+}
+[data-title]:before {
+    content: '';
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent #17a2b8;
+    color: #ffffff;
+    position: absolute;
+    top: 1rem;
+    left: 0.2rem;
+    visibility: hidden;
+}

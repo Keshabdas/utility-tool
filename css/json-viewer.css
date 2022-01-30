@@ -1,0 +1,101 @@
+:root {
+	--black_color: #000;
+	--green_color: #0B7500;
+	--orange_color: #CB7500;
+	--blue_color: #1A01CC;
+	--puprple_color: #90a;
+	--grey_color: #aaa;
+	--white_color: #fff;
+
+	--light-purple_color: #d142e1;
+	--light-green_color: #14d800;
+	--light-blue_color: #00e9e9;
+}
+
+.light-theme {
+	--main-color: var(--black_color);
+	--string: var(--green_color);
+	--date: var(--orange_color);
+	--bool: var(--blue_color);
+	--number: var(--blue_color);
+	--null_and_undefined: var(--puprple_color);
+	--links: var(--grey_color);
+}
+.dark-theme {
+	--main-color: var(--white_color);
+	--string: var(--light-green_color);
+	--bool: var(--light-blue_color);
+	--number: var(--light-blue_color);
+	--null_and_undefined: var(--light-purple_color);
+}
+
+
+.json-viewer {
+	color: var(--main-color);
+	padding-left: 20px;
+}
+
+.json-viewer ul {
+	list-style-type: none;
+	margin: 0;
+	margin: 0 0 0 1px;
+	border-left: 1px dotted #ccc;
+	padding-left: 2em;
+}
+
+.json-viewer .hide {
+	display: none;
+}
+
+.json-viewer .type-string {
+	color: var(--string);
+}
+
+.json-viewer .type-date {
+	color: var(--date);
+}
+
+.json-viewer .type-boolean {
+	color: var(--bool);
+	font-weight: bold;
+}
+
+.json-viewer .type-number {
+	color: var(--number);
+}
+
+.json-viewer .type-null, .json-viewer .type-undefined {
+	color: var(--null_and_undefined);
+}
+
+.json-viewer a.list-link {
+	color: var(--main-color);
+	text-decoration: none;
+	position: relative;
+}
+
+.json-viewer a.list-link:before {
+	color: var(--links);
+	content: "\25BC";
+	position: absolute;
+	display: inline-block;
+	width: 1em;
+	left: -1em;
+}
+
+.json-viewer a.list-link.collapsed:before {
+	content: "\25B6";
+}
+
+.json-viewer a.list-link.empty:before {
+	content: "";
+}
+
+.json-viewer .items-ph {
+	color: var(--links);
+	padding: 0 1em;
+}
+
+.json-viewer .items-ph:hover {
+	text-decoration: underline;
+}
