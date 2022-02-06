@@ -31,6 +31,11 @@ if(localStorage.getItem('nightMode')) {
     localStorage.setItem('nightMode', 'off');
 }
 
+// only json view Local storage setting
+if(!localStorage.getItem('isJsonViewVisible')) {
+    localStorage.setItem('isJsonViewVisible', false);
+}
+
 // Variables related to encryption keys
 var selectedEncryptionKey = JSON.parse(localStorage.getItem('selectedEncryptKey'));
 var encryptionKeys = JSON.parse(localStorage.getItem('EncryptionKeys'));
@@ -42,19 +47,34 @@ var aih_ENI= selectedEncryptionKey.aih_ENI || "";
 var aih_ENK= selectedEncryptionKey.aih_ENK || "";
 var aih_Enc_Key = CryptoJS.enc.Utf8.parse(aih_ENK);
 
+var isJsonViewVisible = JSON.parse(localStorage.getItem('isJsonViewVisible'));
+
 
 // Sets the Encryption Key list for the settings view
 setEncryptionKeysList();
 
+// Sets json view only based on local storage;
+setJsonViewState();
 
 // AesEncrypt function for encrypting the data
 AesEncrypt = function (tabNumber) {
-
-    var val = document.getElementById(`plain_text_${tabNumber}`).value;
-    var randomNum = "12"
-    var result = "";
-    if (randomNum != undefined && randomNum != "") {
-        aih_Enc_IV = CryptoJS.enc.Utf8.parse((aih_ENI).substring(0, (aih_ENI).length - 2) + randomNum);
+    try {
+        var val = document.getElementById(`plain_text_${tabNumber}`).value;
+        var randomNum = "12"
+        var result = "";
+        if (randomNum != undefined && randomNum != "") {
+            aih_Enc_IV = CryptoJS.enc.Utf8.parse((aih_ENI).substring(0, (aih_ENI).length - 2) + randomNum);
+            var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(val), aih_Enc_Key,
+            {
+                keySize: 256 / 8,
+                iv: aih_Enc_IV,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            result = encrypted.toString();
+        }
+        else{
+            aih_Enc_IV = CryptoJS.enc.Utf8.parse(aih_ENI);
         var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(val), aih_Enc_Key,
         {
             keySize: 256 / 8,
@@ -63,63 +83,66 @@ AesEncrypt = function (tabNumber) {
             padding: CryptoJS.pad.Pkcs7
         });
         result = encrypted.toString();
+        }
+        document.getElementById(`cipher_text_${tabNumber}`).value=randomNum+company+"###"+result;
+        return result;
+    } catch (error) {
+        alert(error);
     }
-    else{
-        aih_Enc_IV = CryptoJS.enc.Utf8.parse(aih_ENI);
-    var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(val), aih_Enc_Key,
-    {
-        keySize: 256 / 8,
-        iv: aih_Enc_IV,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-    });
-    result = encrypted.toString();
-    }
-    document.getElementById(`cipher_text_${tabNumber}`).value=randomNum+company+"###"+result;
-    return result;
 };
 
 // AesDecrypt function for decrypting the data in cipher_text
 AesDecrypt = function (tabNumber) {
-
-    var val = document.getElementById(`cipher_text_${tabNumber}`).value;
-    var result = "";
-    var decrypted = "";
-    if (val.indexOf("###") > 0) {
-        var partner_key = val.substring(0, val.indexOf("###"));
-        var iv = (aih_ENI).substring(0, (aih_ENI).length - 2) + partner_key.substring(0, 2);
-        aih_Enc_IV = CryptoJS.enc.Utf8.parse(iv);
-        var content = val.substring(val.indexOf("###") + 3);
-        decrypted = CryptoJS.AES.decrypt(content, aih_Enc_Key,
+    try {
+        var val = document.getElementById(`cipher_text_${tabNumber}`).value;
+        var result = "";
+        var decrypted = "";
+        if (val.indexOf("###") > 0) {
+            var partner_key = val.substring(0, val.indexOf("###"));
+            var iv = (aih_ENI).substring(0, (aih_ENI).length - 2) + partner_key.substring(0, 2);
+            aih_Enc_IV = CryptoJS.enc.Utf8.parse(iv);
+            var content = val.substring(val.indexOf("###") + 3);
+            decrypted = CryptoJS.AES.decrypt(content, aih_Enc_Key,
+                {
+                    keySize: 256 / 8,
+                    iv: aih_Enc_IV,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+        }
+        else {
+            aih_Enc_IV = CryptoJS.enc.Utf8.parse(aih_ENI);
+            decrypted = CryptoJS.AES.decrypt(val, aih_Enc_Key,
             {
                 keySize: 256 / 8,
                 iv: aih_Enc_IV,
                 mode: CryptoJS.mode.CBC,
                 padding: CryptoJS.pad.Pkcs7
             });
+        }
+        
+        result = decrypted.toString(CryptoJS.enc.Utf8);
+        var jsonResult= JSON.parse(result);
+        if(jsonResult["JSONData"]!=null && jsonResult["JSONData"]!= "" && jsonResult["JSONData"] !=undefined){
+            document.getElementById(`json_Result_${tabNumber}`).value = JSON.stringify(JSON.parse(jsonResult["JSONData"]), null, 4);
+            $(`#collapse_all_${tabNumber}`).removeClass('hide');
+            $(`#expand_all_${tabNumber}`).removeClass('hide');
+            showJsonView(tabNumber, jsonResult["JSONData"]);
+        }
+        document.getElementById(`plain_text_${tabNumber}`).value= result;
+        return result;
+    } catch (error) {
+        alert(error);
     }
-    else {
-        aih_Enc_IV = CryptoJS.enc.Utf8.parse(aih_ENI);
-        decrypted = CryptoJS.AES.decrypt(val, aih_Enc_Key,
-        {
-            keySize: 256 / 8,
-            iv: aih_Enc_IV,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7
-        });
-    }
-    
-    result = decrypted.toString(CryptoJS.enc.Utf8);
-    var jsonResult= JSON.parse(result);
-    if(jsonResult["JSONData"]!=null && jsonResult["JSONData"]!= "" && jsonResult["JSONData"] !=undefined){
-        document.getElementById(`json_Result_${tabNumber}`).value = JSON.stringify(JSON.parse(jsonResult["JSONData"]), null, 4);
-        $(`#collapse_all_${tabNumber}`).removeClass('hide');
-        $(`#expand_all_${tabNumber}`).removeClass('hide');
-        showJsonView(tabNumber, jsonResult["JSONData"]);
-    }
-    document.getElementById(`plain_text_${tabNumber}`).value= result;
-    return result;
 };
+
+function showJsonDataView(tabNumber) {
+    var val = document.getElementById(`data_text_${tabNumber}`).value;
+    $(`#collapse_all_${tabNumber}`).removeClass('hide');
+    $(`#expand_all_${tabNumber}`).removeClass('hide');
+    showJsonView(tabNumber, val);
+    jsonView_tab_onClick(tabNumber);
+}
 
 function showJsonView(tabNumber, data, collapseAll) {
     let jsonObj = {};
@@ -135,26 +158,43 @@ function showJsonView(tabNumber, data, collapseAll) {
 }
 
 function collapseAllOnClick(tabNumber) {
-    let data = document.getElementById(`json_Result_${tabNumber}`).value;
-    showJsonView(tabNumber, data, 'collapse_to_level_1')
+    // let data = document.getElementById(`json_Result_${tabNumber}`).value;
+    // let data = document.getElementById(`data_text_${tabNumber}`).value;
+    let data = document.getElementById(`${isJsonViewVisible ? `data_text_${tabNumber}` : `json_Result_${tabNumber}`}`).value;
+    if (data) { 
+        showJsonView(tabNumber, data, 'collapse_to_level_1');
+    } else {
+        alert('collapse issue', data, isJsonViewVisible);
+    }
 }
 
 function expandAllOnClick(tabNumber) {
-    let data = document.getElementById(`json_Result_${tabNumber}`).value;
-    showJsonView(tabNumber, data)
+    // let data = document.getElementById(`json_Result_${tabNumber}`).value;
+    // let data = document.getElementById(`data_text_${tabNumber}`).value;
+    let data = document.getElementById(`${isJsonViewVisible ? `data_text_${tabNumber}` : `json_Result_${tabNumber}`}`).value;
+    if (data) {
+        showJsonView(tabNumber, data);
+    } else {
+        alert('expand issue', data, isJsonViewVisible);
+        console.log(data, isJsonViewVisible);
+    }
 }
-
-
 
 function clearAll(tabNumber) {
     document.getElementById(`cipher_text_${tabNumber}`).value = '';
     document.getElementById(`plain_text_${tabNumber}`).value = '';
     document.getElementById(`json_Result_${tabNumber}`).value = '';
+    if(isJsonViewVisible) document.getElementById(`data_text_${tabNumber}`).value = '';
+    
     $(`#collapse_all_${tabNumber}`).addClass('hide');
     $(`#expand_all_${tabNumber}`).addClass('hide');
     let json_child_element = $(`#json_${tabNumber}`).children();
     if (json_child_element.length > 0) { 
-        textView_tab_onClick(tabNumber);
+        if(isJsonViewVisible) { 
+            jsonView_tab_onClick(tabNumber);
+        } else {
+            textView_tab_onClick(tabNumber);
+        }
         json_child_element.remove();
         $(`#json_${tabNumber}`).text('No Data');
     }
@@ -200,6 +240,7 @@ function textView_tab_onClick(tabNumber) {
     $(`#json_view_content_${tabNumber}`).addClass('hide');
 
     $(`#json_view_button_${tabNumber}`).removeClass('active');
+    // $(`##encryption_tab_content`).removeClass('active');
     $(`#text_view_button_${tabNumber}`).addClass('active');
 }
 
@@ -271,6 +312,8 @@ function applyDarkModeStylingChanges() {
 
 
 // Setings related logics
+
+// re-creates the list
 function setEncryptionKeysList() {
     $("#encryption_keys_wrapper").empty();
     encryptionKeys.forEach(element => {
@@ -327,10 +370,16 @@ function newEncryptionTableRow() {
         <td><input type="text" placeholder="AIH ENI" class="form-control ${darkMode === 'on' ? 'bg-dark text-white' : null}" id="aih_eni" aria-describedby="textHelp"></td>
         <td><input type="text" placeholder="AIH ENK" class="form-control ${darkMode === 'on' ? 'bg-dark text-white' : null}" id="aih_enk" aria-describedby="emailHelp"></td>
         <td>
-            <button class="btn btn-sm btn-success"
-            onclick="addRow()">Add</button>
-            <button class="btn btn-sm btn-info ml-1"
-            onclick="cancelRow()">Cancel</button>
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-sm btn-success mb-1"
+                    onclick="addRow()">Add</button>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-sm btn-info"
+                    onclick="cancelRow()">Cancel</button>
+                </div>
+            </div>
         </td>
     </tr>
     `;
@@ -380,6 +429,87 @@ function deleteRow(keyName) {
     setEncryptionKeysList();
 }
 
+
+
+// JSON view only functions;
+function setJsonViewState(tabNumber = 1) {
+    let isChecked = Boolean(JSON.parse(localStorage.getItem('isJsonViewVisible')));
+    if (isChecked) {
+        document.getElementById('json-mode').checked = isChecked;
+        $(`#data_to_json_view_${tabNumber}`).removeClass('d-none');
+        $(`#data_to_json_view_${tabNumber}`).addClass('d-block');
+        $(`#e-d-box_${tabNumber}`).removeClass('d-block');
+        $(`#e-d-box_${tabNumber}`).addClass('d-none');
+
+        jsonView_tab_onClick(1);
+        $(`#text_view_button_${tabNumber}`).removeClass('active');
+        $(`#text_view_button_${tabNumber}`).addClass('d-none');
+        $(`#json_view_button_${tabNumber}`).addClass('active');
+
+        $("#title").text("JSON View");
+
+    } else {
+        document.getElementById('e-d-mode').checked = true;
+        // $(`#e-d-box_${tabNumber}`).removeClass('d-none');
+        $(`#e-d-box_${tabNumber}`).addClass('d-block');
+        // $(`#data_to_json_view_${tabNumber}`).removeClass('d-block');
+        $(`#data_to_json_view_${tabNumber}`).addClass('d-none');
+        
+        textView_tab_onClick(1);
+        $(`#text_view_button_${tabNumber}`).removeClass('active');
+        $(`#text_view_button_${tabNumber}`).addClass('active');
+
+        $("#title").text("Encryption Decryption Utility");
+    }
+}
+
+function onModeRadioChange(mode, tabNumber = 1) {
+    if (mode === 'json-mode') {
+        localStorage.setItem('isJsonViewVisible', true);
+        isJsonViewVisible = true;
+        $(`#data_to_json_view_${tabNumber}`).removeClass('d-none');
+        $(`#data_to_json_view_${tabNumber}`).addClass('d-block');
+        $(`#e-d-box_${tabNumber}`).removeClass('d-block');
+        $(`#e-d-box_${tabNumber}`).addClass('d-none');
+
+        $(`#text_view_button_${tabNumber}`).removeClass('active');
+        $(`#text_view_button_${tabNumber}`).removeClass('d-block');
+        $(`#text_view_button_${tabNumber}`).addClass('d-none');
+        $(`#json_view_button_${tabNumber}`).addClass('active');
+        jsonView_tab_onClick(1);
+
+
+        $("#title").text("JSON View");
+
+    } else if (mode === 'e-d-mode') {
+        localStorage.setItem('isJsonViewVisible', false);
+        isJsonViewVisible = false;
+        $(`#data_to_json_view_${tabNumber}`).removeClass('d-block');
+        $(`#data_to_json_view_${tabNumber}`).addClass('d-none');
+        $(`#e-d-box_${tabNumber}`).removeClass('d-none');
+        $(`#e-d-box_${tabNumber}`).addClass('d-block');
+        
+        $(`#json_view_button_${tabNumber}`).removeClass('active');
+        $(`#text_view_button_${tabNumber}`).addClass('active');
+        $(`#text_view_button_${tabNumber}`).addClass('d-block');
+        textView_tab_onClick(1);
+        
+        $("#title").text("Encryption Decryption Utility");
+    }
+
+    // resets the tabs
+    $("#item-1").nextUntil("#add").remove();
+    $("#tab-1").nextAll().remove();
+    $("#tab-no-1").addClass('active');
+    $("#tab-1").addClass('active show');
+    
+    // clears all the input data.
+    clearAll();
+}
+
+
+
+// local storage
 function updateLocalStorage(key, data) {
     let currentData = JSON.parse(localStorage.getItem(key));
     localStorage.setItem(key, JSON.stringify([...currentData, data]));
@@ -387,4 +517,11 @@ function updateLocalStorage(key, data) {
 
 function onModalClose() {
     $("#editable_row").remove();
+
+    // resets the settings tabs view
+    $(`#view-setting-tab`).removeClass('active');
+    $(`#view-tab`).removeClass('show active');
+    
+    $(`#encryption_key`).addClass('active');
+    $(`#encryption_tab_content`).addClass('show active');
 }
