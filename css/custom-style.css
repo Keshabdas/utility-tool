@@ -156,6 +156,10 @@ hr {
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
 }
 
+#settings .right-side {
+    min-height: 300px;
+    border-left: 1px solid #dee2e6;
+}
 #settings .nav-link {
     border-radius: 0px;
 }
@@ -163,9 +167,9 @@ hr {
     background-color: #17a2b8 !important;
     color: white;
 }
-#settings .nav-link:hover {
+/* #settings .nav-link:hover {
     color: white;
-}
+} */
 
 
 

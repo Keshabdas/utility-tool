@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" type="image/png" href="./images/EncDec.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encryption and Decryption Module for Wellness Portal</title>
+    <title>Utility Tool</title>
     <meta http-equiv="content-type" content="text/html" charset="windows-1252">
     <script type="text/javascript" src="js/aes.js"></script>
     <script src="js/jquery.slim.min.js"></script>
@@ -30,7 +30,7 @@
     <nav class="navbar navbar-light bg-light text-center">
         <div class="d-flex justify-content-between align-content-center w-100">
             <span class="setting_icon" data-toggle="modal" data-target="#staticBackdrop">⚙</span>
-            <h5 class="w-100 mb-0">Encryption Decryption Utility</h5>
+            <h5 id="title" class="w-100 mb-0">Encryption Decryption Utility</h5>
             <div class="d-flex">
                 <label class="switch">
                     <input id="mode_switch" type="checkbox" onchange="handleDarkMode()">
@@ -57,31 +57,51 @@
                     <div class="tab-pane fade active show" id="tab-1" role="tabpanel" aria-labelledby="tab-no-1">
                         <div class="row p-2">
                             <div class="col-sm-4">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group shadow-sm">
-                                            <textarea id="cipher_text_1" class="form-control decryption_box"
-                                                id="exampleFormControlTextarea1" placeholder="Decryption"></textarea>
+                                <div id="e-d-box_1" class="d-block">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group shadow-sm">
+                                                <textarea id="cipher_text_1" class="form-control decryption_box"
+                                                    id="exampleFormControlTextarea1"
+                                                    placeholder="Decryption"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-sm btn-info shadow-sm"
+                                                onclick="AesDecrypt(1)">Decrypt</button>
+                                            <!-- <button class="btn btn-info shadow-sm" onclick="copyToClipBoardFunction('decrypt',1)">Copy to Clipboard</button> -->
                                         </div>
                                     </div>
-                                    <div class="col-sm-12">
-                                        <button class="btn btn-sm btn-info shadow-sm"
-                                            onclick="AesDecrypt(1)">Decrypt</button>
-                                        <!-- <button class="btn btn-info shadow-sm" onclick="copyToClipBoardFunction('decrypt',1)">Copy to Clipboard</button> -->
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group shadow-sm">
+                                                <textarea id="plain_text_1" class="form-control encryption_box"
+                                                    id="exampleFormControlTextarea2"
+                                                    placeholder="Encryption"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-sm btn-info shadow-sm"
+                                                onclick="AesEncrypt(1)">Encrypt</button>
+                                            <!-- <button class="btn btn-info shadow-sm" onclick="copyToClipBoardFunction('encrypt',1)">Copy to Clipboard</button> -->
+                                        </div>
                                     </div>
                                 </div>
-                                <hr />
-                                <div class="row">
+                                <div class="row" id="data_to_json_view_1" class="d-none">
                                     <div class="col-sm-12">
-                                        <div class="form-group shadow-sm">
-                                            <textarea id="plain_text_1" class="form-control encryption_box"
-                                                id="exampleFormControlTextarea2" placeholder="Encryption"></textarea>
+                                        <div>
+                                            <div class="d-flex justify-content-between w-100">
+                                                <div class="w-100">
+                                                    <div class="form-group shadow-sm">
+                                                        <textarea id="data_text_1" class="form-control encryption_box"
+                                                            placeholder="Enter your data here"></textarea>
+                                                    </div>
+                                                    <button class="btn btn-sm btn-info shadow-sm mb-2"
+                                                        onclick="showJsonDataView(1)">Evaluate</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <button class="btn btn-sm btn-info shadow-sm"
-                                            onclick="AesEncrypt(1)">Encrypt</button>
-                                        <!-- <button class="btn btn-info shadow-sm" onclick="copyToClipBoardFunction('encrypt',1)">Copy to Clipboard</button> -->
                                     </div>
                                 </div>
                                 <hr />
@@ -129,6 +149,12 @@
         </div>
     </div>
 
+    <!-- Alert message -->
+    <!-- <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>Danger!</strong> This alert box could indicate a dangerous or potentially negative action.
+    </div> -->
+
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -150,9 +176,11 @@
                                     <a class="nav-link active" id="encryption_key" data-toggle="pill"
                                         href="#encryption_tab_content" role="tab" aria-controls="encryption_tab_content"
                                         aria-selected="true">Encryption Keys</a>
+                                    <a class="nav-link" id="view-setting-tab" data-toggle="pill" href="#view-tab"
+                                        role="tab" aria-controls="view-tab" aria-selected="false">Views</a>
                                 </div>
                             </div>
-                            <div class="col-md-10 col-sm-12">
+                            <div class="col-md-10 col-sm-12 right-side">
                                 <div class="tab-content" id="v-pills-tabContent">
                                     <div class="tab-pane fade show active overflow-auto" id="encryption_tab_content"
                                         role="tabpanel" aria-labelledby="encryption_key">
@@ -168,8 +196,33 @@
                                             </thead>
                                             <tbody id="encryption_keys_wrapper"></tbody>
                                         </table>
-                                        <button class="btn btn-sm btn-info float-right my-1"
-                                            onclick="addEditableRow()">Add new</button>
+                                        <button class="btn btn-sm btn-info my-1" onclick="addEditableRow()">Add
+                                            new</button>
+                                    </div>
+                                    <div class="tab-pane fade" id="view-tab" role="tabpanel"
+                                        aria-labelledby="view-setting-tab">
+                                        <h5>Select Mode</h5>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view" id="json-mode"
+                                                value="json-mode" onclick="onModeRadioChange('json-mode')">
+                                            <label class="form-check-label" for="json-mode">
+                                                Only JSON Mode
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view" id="e-d-mode"
+                                                value="e-d-mode" onclick="onModeRadioChange('e-d-mode')">
+                                            <label class="form-check-label" for="e-d-mode">
+                                                Encryption and Decryption Mode
+                                            </label>
+                                        </div>
+                                        <!-- <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view" id="exampleRadios3"
+                                                value="option3" disabled>
+                                            <label class="form-check-label" for="exampleRadios3">
+                                                Disabled radio
+                                            </label>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
