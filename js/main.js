@@ -502,6 +502,9 @@ function onModeRadioChange(mode, tabNumber = 1) {
     $("#tab-1").nextAll().remove();
     $("#tab-no-1").addClass('active');
     $("#tab-1").addClass('active show');
+
+    let addIcon = $('#add');
+    if(addIcon.hasClass('disable')) addIcon.removeClass('disable');
     
     // clears all the input data.
     clearAll();
