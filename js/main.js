@@ -33,7 +33,7 @@ if(localStorage.getItem('nightMode')) {
 
 // only json view Local storage setting
 if(!localStorage.getItem('isJsonViewVisible')) {
-    localStorage.setItem('isJsonViewVisible', false);
+    localStorage.setItem('isJsonViewVisible', true);
 }
 
 // Variables related to encryption keys
