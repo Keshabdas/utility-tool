@@ -137,6 +137,8 @@ AesDecrypt = function (tabNumber) {
 };
 
 function showJsonDataView(tabNumber) {
+    alert('test');
+    (window.ReactNativeWebView || window).postMessage('enable location');
     var val = document.getElementById(`data_text_${tabNumber}`).value;
     $(`#collapse_all_${tabNumber}`).removeClass('hide');
     $(`#expand_all_${tabNumber}`).removeClass('hide');
