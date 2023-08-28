@@ -183,6 +183,10 @@ function expandAllOnClick(tabNumber) {
 }
 
 function clearAll(tabNumber) {
+
+    const Locdata = localStorage.getItem('location');
+    alert(Locdata || 'NO DATA')
+    
     document.getElementById(`cipher_text_${tabNumber}`).value = '';
     document.getElementById(`plain_text_${tabNumber}`).value = '';
     document.getElementById(`json_Result_${tabNumber}`).value = '';
