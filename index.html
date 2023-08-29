@@ -239,6 +239,7 @@
 <script defer src="js/main.js"></script>
 <script defer>
     window.addEventListener("message", message => {
+        alert(message.data);
         const data = JSON.parse(JSON.stringify(message.data));
         localStorage.setItem('location', JSON.stringify(${message.data}));
         alert(data)
