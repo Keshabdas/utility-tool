@@ -239,7 +239,8 @@
 <script defer src="js/main.js"></script>
 <script>
      window.addEventListener("message", message => {
-        alert(message.data)
+        alert(message.data);
+         alert(JSON.parse(message.data));
    });
 </script>
 </html>
