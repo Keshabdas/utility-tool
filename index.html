@@ -237,5 +237,9 @@
     </div>
 </body>
 <script defer src="js/main.js"></script>
-
+<script defer>
+    window.addEventListener("message", message => {
+        alert(message.data)
+   });
+</script>
 </html>
